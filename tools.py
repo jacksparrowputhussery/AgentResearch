@@ -4,6 +4,8 @@ from bs4 import BeautifulSoup
 from tavily import TavilyClient
 import os 
 from dotenv import load_dotenv
+
+import streamlit as st
 from rich import print
 load_dotenv()
 
