@@ -415,6 +415,34 @@ details summary {
     background: #ede0c8 !important;
     border-radius: 4px !important;
 }
+
+/* ===== Fix Streamlit Markdown Colors ===== */
+
+[data-testid="stMarkdownContainer"] {
+    color: #1a1410 !important;
+}
+
+[data-testid="stMarkdownContainer"] * {
+    color: #1a1410 !important;
+}
+
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] li {
+    color: #3a2e22 !important;
+}
+
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+[data-testid="stMarkdownContainer"] h4,
+[data-testid="stMarkdownContainer"] h5,
+[data-testid="stMarkdownContainer"] h6 {
+    color: #1a1410 !important;
+}
+
+[data-testid="stMarkdownContainer"] strong {
+    color: #1a1410 !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
