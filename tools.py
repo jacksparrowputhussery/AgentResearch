@@ -20,7 +20,7 @@ tavily = TavilyClient(api_key=api_key)
 
 
 
-@tool
+
 def web_search(query : str) -> str:
     """Search the web for recent and reliable information on a topic . Returns Titles , URLs and snippets."""
     results = tavily.search(query=query,max_results=5)
@@ -34,7 +34,7 @@ def web_search(query : str) -> str:
     
     return "\n----\n".join(out)
 
-@tool
+
 def scrape_url(url: str) -> str:
     """Scrape and return clean text content from a given URL for deeper reading."""
     try:

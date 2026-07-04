@@ -2,7 +2,18 @@
 
 import streamlit as st
 import time
-from agents import build_reader_agent, build_search_agent, writer_chain, critic_chain
+# from agents import build_reader_agent, build_search_agent, writer_chain, critic_chain
+
+from agents import writer_chain, critic_chain
+from tools import web_search, scrape_url
+import re
+
+def extract_first_url(text):
+    match = re.search(r"https?://[^\s]+", text)
+    if not match:
+        return None
+    return match.group(0).rstrip(".,)")
+
 
 # ── Page config ───────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -547,26 +558,40 @@ if st.session_state.running and not st.session_state.done:
     topic_val = st.session_state.topic_input
 
     # ── Step 1: Search ──
-    with st.spinner("Search Agent is gathering information…"):
-        search_agent = build_search_agent()
-        sr = search_agent.invoke({
-            "messages": [("user", f"Find recent, reliable and detailed information about: {topic_val}")]
-        })
-        results["search"] = sr["messages"][-1].content
+    # with st.spinner("Search Agent is gathering information…"):
+    #     search_agent = build_search_agent()
+    #     sr = search_agent.invoke({
+    #         "messages": [("user", f"Find recent, reliable and detailed information about: {topic_val}")]
+    #     })
+    #     results["search"] = sr["messages"][-1].content
+    #     st.session_state.results = dict(results)
+
+    with st.spinner("Searching the web…"):
+        results["search"] = web_search.invoke({"query": topic_val})
         st.session_state.results = dict(results)
 
     # ── Step 2: Reader ──
-    with st.spinner("Reader Agent is scraping top resources…"):
-        reader_agent = build_reader_agent()
-        rr = reader_agent.invoke({
-            "messages": [("user",
-                f"Based on the following search results about '{topic_val}', "
-                f"pick the most relevant URL and scrape it for deeper content.\n\n"
-                f"Search Results:\n{results['search'][:800]}"
-            )]
-        })
-        results["reader"] = rr["messages"][-1].content
-        st.session_state.results = dict(results)
+    # with st.spinner("Reader Agent is scraping top resources…"):
+    #     reader_agent = build_reader_agent()
+    #     rr = reader_agent.invoke({
+    #         "messages": [("user",
+    #             f"Based on the following search results about '{topic_val}', "
+    #             f"pick the most relevant URL and scrape it for deeper content.\n\n"
+    #             f"Search Results:\n{results['search'][:800]}"
+    #         )]
+    #     })
+    #     results["reader"] = rr["messages"][-1].content
+    #     st.session_state.results = dict(results)
+
+    with st.spinner("Scraping the top source…"):
+      url = extract_first_url(results["search"])
+
+      if url:
+        results["reader"] = scrape_url.invoke({"url": url})
+      else:
+        results["reader"] = "No valid URL found."
+
+      st.session_state.results = dict(results)
 
     # ── Step 3: Writer ──
     with st.spinner("Writer is composing the report…"):
