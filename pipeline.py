@@ -1,32 +1,47 @@
 
 
+# from agents import (
+#     build_reader_agent,
+#     build_search_agent,
+#     writer_chain,
+#     critic_chain,
+#     llm
+# )
+
 from agents import (
-    build_reader_agent,
-    build_search_agent,
     writer_chain,
     critic_chain,
-    llm
 )
+
+from tools import web_search, scrape_url
+import re
 
 MAX_CONTEXT = 2000
 
 
-def compress_text(text: str, limit: int = MAX_CONTEXT):
+def extract_first_url(text):
+    match = re.search(r"https?://[^\s]+", text)
+    if not match:
+        return None
+    return match.group(0).rstrip(".,)")
 
-    if len(text) <= limit:
-        return text
 
-    summary = llm.invoke(
-        f"""
-        Summarize the following research content clearly.
-        Keep only important technical facts and insights.
+# def compress_text(text: str, limit: int = MAX_CONTEXT):
 
-        Content:
-        {text[:6000]}
-        """
-    )
+#     if len(text) <= limit:
+#         return text
 
-    return summary.content
+#     summary = llm.invoke(
+#         f"""
+#         Summarize the following research content clearly.
+#         Keep only important technical facts and insights.
+
+#         Content:
+#         {text[:6000]}
+#         """
+#     )
+
+#     return summary.content
 
 
 def run_research_pipeline(topic: str):
@@ -41,26 +56,28 @@ def run_research_pipeline(topic: str):
     print("STEP 1 - Search Agent")
     print("=" * 50)
 
-    search_agent = build_search_agent()
+    # search_agent = build_search_agent()
 
-    search_result = search_agent.invoke({
-        "messages": [
-            (
-                "user",
-                f"""
-                Find ONLY 3 highly relevant and reliable sources
-                about: {topic}
+    # search_result = search_agent.invoke({
+    #     "messages": [
+    #         (
+    #             "user",
+    #             f"""
+    #             Find ONLY 3 highly relevant and reliable sources
+    #             about: {topic}
 
-                Return concise results.
-                """
-            )
-        ]
-    })
+    #             Return concise results.
+    #             """
+    #         )
+    #     ]
+    # })
 
-    raw_search = search_result['messages'][-1].content
+    # raw_search = search_result['messages'][-1].content
 
     # compress search output
     # compressed_search = compress_text(raw_search)
+
+    raw_search = web_search.invoke({"query": topic})
 
     compressed_search = raw_search[:2000]
 
@@ -77,29 +94,36 @@ def run_research_pipeline(topic: str):
     print("STEP 2 - Reader Agent")
     print("=" * 50)
 
-    reader_agent = build_reader_agent()
+    # reader_agent = build_reader_agent()
 
-    reader_result = reader_agent.invoke({
-        "messages": [
-            (
-                "user",
-                f"""
-                From the following summarized search results
-                choose the BEST source and extract the most
-                important information.
+    # reader_result = reader_agent.invoke({
+    #     "messages": [
+    #         (
+    #             "user",
+    #             f"""
+    #             From the following summarized search results
+    #             choose the BEST source and extract the most
+    #             important information.
 
-                Topic: {topic}
+    #             Topic: {topic}
 
-                Search Results:
-                {compressed_search}
-                """
-            )
-        ]
-    })
+    #             Search Results:
+    #             {compressed_search}
+    #             """
+    #         )
+    #     ]
+    # })
 
-    raw_scraped = reader_result['messages'][-1].content
+    # raw_scraped = reader_result['messages'][-1].content
 
     # compressed_scraped = compress_text(raw_scraped)
+
+    url = extract_first_url(raw_search)
+
+    if url:
+       raw_scraped = scrape_url.invoke({"url": url})
+    else:
+        raw_scraped = "No valid URL found."
 
     compressed_scraped = raw_scraped[:2000]
 
