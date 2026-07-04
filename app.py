@@ -567,7 +567,7 @@ if st.session_state.running and not st.session_state.done:
     #     st.session_state.results = dict(results)
 
     with st.spinner("Searching the web…"):
-        results["search"] = web_search.invoke({"query": topic_val})
+        results["search"] = web_search.invoke(topic_val)
         st.session_state.results = dict(results)
 
     # ── Step 2: Reader ──
@@ -587,7 +587,7 @@ if st.session_state.running and not st.session_state.done:
       url = extract_first_url(results["search"])
 
       if url:
-        results["reader"] = scrape_url.invoke({"url": url})
+        results["reader"] = scrape_url.invoke(url)
       else:
         results["reader"] = "No valid URL found."
 
