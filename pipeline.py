@@ -60,7 +60,9 @@ def run_research_pipeline(topic: str):
     raw_search = search_result['messages'][-1].content
 
     # compress search output
-    compressed_search = compress_text(raw_search)
+    # compressed_search = compress_text(raw_search)
+
+    compressed_search = raw_search[:2000]
 
     state["search_results"] = compressed_search
 
@@ -97,7 +99,9 @@ def run_research_pipeline(topic: str):
 
     raw_scraped = reader_result['messages'][-1].content
 
-    compressed_scraped = compress_text(raw_scraped)
+    # compressed_scraped = compress_text(raw_scraped)
+
+    compressed_scraped = raw_scraped[:2000]
 
     state["scraped_content"] = compressed_scraped
 
@@ -138,7 +142,9 @@ def run_research_pipeline(topic: str):
     print("STEP 4 - Critic")
     print("=" * 50)
 
-    short_report = compress_text(report, limit=3000)
+    # short_report = compress_text(report, limit=3000)
+
+    short_report = report[:3000]
 
     feedback = critic_chain.invoke({
         "report": short_report
