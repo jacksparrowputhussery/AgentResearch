@@ -654,7 +654,7 @@ if r:
         <div class="report-panel">
             <div class="panel-label gold">Final Research Report</div>
         """, unsafe_allow_html=True)
-        st.markdown(r["writer"])
+        st.code(r["writer"])
         st.markdown("</div>", unsafe_allow_html=True)
 
         st.download_button(
@@ -670,7 +670,7 @@ if r:
         <div class="feedback-panel">
             <div class="panel-label green">Critic Feedback & Score</div>
         """, unsafe_allow_html=True)
-        st.markdown(r["critic"])
+        st.code(r["critic"])
         st.markdown("</div>", unsafe_allow_html=True)
 
 
