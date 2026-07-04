@@ -649,29 +649,50 @@ if r:
             )
 
     # Final report
-    if "writer" in r:
-        st.markdown("""
-        <div class="report-panel">
-            <div class="panel-label gold">Final Research Report</div>
-        """, unsafe_allow_html=True)
-        st.code(r["writer"])
-        st.markdown("</div>", unsafe_allow_html=True)
+    # if "writer" in r:
+        # st.markdown("""
+        # <div class="report-panel">
+        #     <div class="panel-label gold">Final Research Report</div>
+        # """, unsafe_allow_html=True)
+        # st.code(r["writer"])
+        # st.markdown("</div>", unsafe_allow_html=True)
 
-        st.download_button(
-            label="Download Report (.md)",
-            data=r["writer"],
-            file_name=f"research_report_{int(time.time())}.md",
-            mime="text/markdown",
-        )
+        # st.download_button(
+        #     label="Download Report (.md)",
+        #     data=r["writer"],
+        #     file_name=f"research_report_{int(time.time())}.md",
+        #     mime="text/markdown",
+        # )
+
+
+
+    # Critic feedback
+    # if "critic" in r:
+    #     st.markdown("""
+    #     <div class="feedback-panel">
+    #         <div class="panel-label green">Critic Feedback & Score</div>
+    #     """, unsafe_allow_html=True)
+    #     st.code(r["critic"])
+    #     st.markdown("</div>", unsafe_allow_html=True)
+
+    # Final report
+    if "writer" in r:
+       with st.container(border=True):
+        st.markdown("### 📄 Final Research Report")
+        st.markdown(r["writer"])
+
+       st.download_button(
+        label="Download Report (.md)",
+        data=r["writer"],
+        file_name=f"research_report_{int(time.time())}.md",
+        mime="text/markdown",
+    )
 
     # Critic feedback
     if "critic" in r:
-        st.markdown("""
-        <div class="feedback-panel">
-            <div class="panel-label green">Critic Feedback & Score</div>
-        """, unsafe_allow_html=True)
-        st.code(r["critic"])
-        st.markdown("</div>", unsafe_allow_html=True)
+      with st.container(border=True):
+        st.markdown("### 📝 Critic Feedback & Score")
+        st.markdown(r["critic"])
 
 
 # ── Footer ────────────────────────────────────────────────────────────────────
